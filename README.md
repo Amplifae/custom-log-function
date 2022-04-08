@@ -4,12 +4,17 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2021.svg?style=flat-square)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FARM-Templates%2Fazuredeploy.json/createUIDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2FSentinel-playground%2Fmain%2FARM-Templates%2FUiDefinition.json)
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSecureHats%2Fcustom-log-function%2Fmain%2Fdeploy.json)
 # Custom Log Function
 
-The Sentinel playground is a project to deploy an initial Azure Sentinel environment pre-provisioned with sample data. 
-This to speed up the deployment for Proof of Concept and demo scenarios.
+The Custom Log Function is a project to send data to a log analytics workspace. 
+This to speed up the deployment for Proof of Concept and demo scenarios or to make it easier to ingest custom data for solutions that don't have a data connector to Microsoft Sentinel.
 
 #### Prerequisites
 
-- Azure user account with enough permissions. See table below.
+- Log Analytics Workspace
+- Contributor permissions on an Azure Resource Group
+
+### ToDo
+
+Information on how to upload data
