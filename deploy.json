@@ -159,7 +159,7 @@
             "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('StorageAccountName')),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('StorageSuffix')))]",
             "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('StorageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('StorageSuffix')))]",
             "WEBSITE_CONTENTSHARE": "[toLower(variables('FunctionName'))]",
-            "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/azurekid/blog/raw/master/CustomLogs.zip"
+            "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/SecureHats/custom-log-function/raw/main/function.zip"
           }
         }
       ]
