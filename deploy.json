@@ -212,5 +212,11 @@
         "shareQuota": 5120
       }
     }
-  ]
+  ],
+  "outputs": {
+        "functionAppName": {
+            "type": "string",
+            "value": "[variables('functionName')]"
+        }
+    }
 }
