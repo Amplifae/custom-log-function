@@ -77,18 +77,24 @@ catch {
     break
 }
 
-$workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
+try {
+    $workspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys `
         -ResourceGroupName $ResourceGroupName `
         -Name $WorkspaceName).PrimarySharedKey `
-| ConvertTo-SecureString -AsPlainText -Force
+        | ConvertTo-SecureString -AsPlainText -Force
+}
+catch {
+    Write-Warning -Message "Log Analytics workspace key for [$($WorkspaceName)] not found."
+    break
+}
 
 Write-Output 'Upload data to workspace'
-$postObject = @{
+$parameters = @{
     "workspaceId"  = $workspaceId
     "workspaceKey" = $workspaceKey
     "tableName"    = $tableName
 }
-Process-Payload -customData $dataObject -tablename $tableName
+Process-Payload @parameters -customData $dataObject
 
 # Associate values to output bindings by calling 'Push-OutputBinding'.
 Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
