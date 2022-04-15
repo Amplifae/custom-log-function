@@ -134,5 +134,5 @@ function Process-Payload {
         $postObject.timestamp = [DateTime]::UtcNow.ToString("r")
     }
     Write-Host "Sending data"
-    Set-LogAnalyticsData @postObject
+    return Set-LogAnalyticsData @postObject
 }
