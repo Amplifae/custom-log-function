@@ -2,30 +2,43 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "FunctionName": {
-      "defaultValue": "CustomLogger",
+    "functionName": {
+      "defaultValue": "cli-log",
       "type": "string",
+      "minLength": 7,
       "metadata": {
         "description": "Specifies the name of the Function App."
       }
+    },
+    "workspaceId": {
+        "type": "string",
+        "metadata": {
+          "description": "optional: workspaceId of the default workspace"
+        }
+    },
+    "workspacekey": {
+        "type": "string",
+        "metadata": {
+          "description": "optional: workspace key of the default workspace"
+        }
     }
   },
   "variables": {
-    "FunctionName": "[concat(toLower(parameters('FunctionName')), uniqueString(resourceGroup().id))]",
-    "StorageAccountName": "[concat(substring(variables('FunctionName'), 0, 20), 'sa')]",
-    "StorageContainerName": "customlogger",
-    "StorageSuffix": "[environment().suffixes.storage]"
+    "functionName": "[substring(concat(tolower(parameters('functionName')), uniqueString(resourceGroup().id)), 0, 20)]",
+    "storageAccountName": "[replace(variables('functionName'),'-', '')]",
+    "storageContainerName": "config",
+    "storageSuffix": "[environment().suffixes.storage]"
   },
   "resources": [
     {
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
-      "name": "[variables('FunctionName')]",
+      "name": "[variables('functionName')]",
       "location": "[resourceGroup().location]",
       "kind": "web",
       "properties": {
         "Application_Type": "web",
-        "ApplicationId": "[variables('FunctionName')]"
+        "ApplicationId": "[variables('functionName')]"
       }
     },
     {
@@ -66,7 +79,7 @@
     {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-02-01",
-      "name": "[variables('FunctionName')]",
+      "name": "[variables('functionName')]",
       "location": "[resourceGroup().location]",
       "sku": {
         "name": "Y1",
@@ -74,7 +87,7 @@
       },
       "kind": "functionapp",
       "properties": {
-        "name": "[variables('FunctionName')]",
+        "name": "[variables('functionName')]",
         "workerSize": "0",
         "workerSizeId": "0",
         "numberOfWorkers": "1"
@@ -122,20 +135,20 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
-      "name": "[variables('FunctionName')]",
+      "name": "[variables('functionName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]",
-        "[resourceId('Microsoft.Web/serverfarms', variables('FunctionName'))]",
-        "[resourceId('Microsoft.Insights/components', variables('FunctionName'))]"
+        "[resourceId('Microsoft.Web/serverfarms', variables('functionName'))]",
+        "[resourceId('Microsoft.Insights/components', variables('functionName'))]"
       ],
       "kind": "functionapp",
       "identity": {
         "type": "SystemAssigned"
       },
       "properties": {
-        "name": "[variables('FunctionName')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('FunctionName'))]",
+        "name": "[variables('functionName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionName'))]",
         "httpsOnly": true,
         "clientAffinityEnabled": true,
         "alwaysOn": true,
@@ -149,16 +162,18 @@
           "type": "config",
           "name": "appsettings",
           "dependsOn": [
-            "[concat('Microsoft.Web/sites/', variables('FunctionName'))]"
+            "[concat('Microsoft.Web/sites/', variables('functionName'))]"
           ],
           "properties": {
             "FUNCTIONS_EXTENSION_VERSION": "~3",
             "FUNCTIONS_WORKER_RUNTIME": "powershell",
-            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.insights/components', variables('FunctionName')), '2015-05-01').InstrumentationKey]",
-            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components', variables('FunctionName')), '2015-05-01').ConnectionString]",
-            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('StorageAccountName')),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('StorageSuffix')))]",
-            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('StorageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('StorageSuffix')))]",
-            "WEBSITE_CONTENTSHARE": "[toLower(variables('FunctionName'))]",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.insights/components', variables('functionName')), '2015-05-01').InstrumentationKey]",
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components', variables('functionName')), '2015-05-01').ConnectionString]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('storageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('storageSuffix')))]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('storageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('storageSuffix')))]",
+            "WEBSITE_CONTENTSHARE": "[toLower(variables('functionName'))]",
+            "workspaceId": "[parameters('workspaceId')]",
+            "workspaceKey": "[parameters('workspacekey')]",
             "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/SecureHats/custom-log-function/raw/main/function.zip"
           }
         }
