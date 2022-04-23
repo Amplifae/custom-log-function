@@ -212,7 +212,7 @@ Function Get-Workspace {
     }
 }
 
-function Process-Payload {
+function Send-CustomLogs {
     param (
         [Parameter(Mandatory = $true)]
         [String]$workspaceId,

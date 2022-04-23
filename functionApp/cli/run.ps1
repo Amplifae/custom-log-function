@@ -59,7 +59,7 @@ if ($null -ne $workspace.workspaceKey) {
     $parameters.workspaceKey   = $env:workspaceKey | ConvertTo-SecureString -AsPlainText -Force
 }
 
-$response = Process-Payload @parameters
+$response = Send-CustomLogs @parameters
 
 # Associate values to output bindings by calling 'Push-OutputBinding'.
 Push-OutputBinding `

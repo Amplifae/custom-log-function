@@ -11,13 +11,13 @@
       }
     },
     "workspaceId": {
-        "type": "string",
+        "type": "securestring",
         "metadata": {
           "description": "optional: workspaceId of the default workspace"
         }
     },
     "workspacekey": {
-        "type": "string",
+        "type": "securestring",
         "metadata": {
           "description": "optional: workspace key of the default workspace"
         }
