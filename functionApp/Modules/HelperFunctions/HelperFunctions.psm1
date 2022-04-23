@@ -224,7 +224,7 @@ function Send-CustomLogs {
         [string]$tableName,
 
         [Parameter(Mandatory = $true)]
-        [array]$customData
+        [array]$dataInput
     )
 
     $postObject = @{
@@ -238,9 +238,9 @@ function Send-CustomLogs {
     $tempdata = @()
     $tempDataSize = 0
 
-    if ((($customData | ConvertTo-Json -depth 20).Length) -gt 25MB) {
+    if ((($dataInput | ConvertTo-Json -depth 20).Length) -gt 25MB) {
         Write-Host "Upload is over 25MB, needs to be split"
-        foreach ($record in $customData) {
+        foreach ($record in $dataInput) {
             $tempdata += $record
             $tempDataSize += ($record | ConvertTo-Json -depth 20).Length
             if ($tempDataSize -gt 25MB) {
@@ -266,7 +266,7 @@ function Send-CustomLogs {
         $tempDataSize = 0
     }
     else {
-        $postObject.body = ([System.Text.Encoding]::UTF8.GetBytes(($customData | ConvertTo-Json -depth 20)))
+        $postObject.body = ([System.Text.Encoding]::UTF8.GetBytes(($dataInput | ConvertTo-Json -depth 20)))
         $postObject.timestamp = [DateTime]::UtcNow.ToString("r")
     }
     Write-Host "Sending data"
