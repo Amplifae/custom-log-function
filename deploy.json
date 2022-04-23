@@ -11,16 +11,16 @@
       }
     },
     "workspaceId": {
-        "type": "securestring",
-        "metadata": {
-          "description": "optional: workspaceId of the default workspace"
-        }
+      "type": "securestring",
+      "metadata": {
+        "description": "optional: workspaceId of the default workspace"
+      }
     },
     "workspacekey": {
-        "type": "securestring",
-        "metadata": {
-          "description": "optional: workspace key of the default workspace"
-        }
+      "type": "securestring",
+      "metadata": {
+        "description": "optional: workspace key of the default workspace"
+      }
     }
   },
   "variables": {
@@ -229,9 +229,17 @@
     }
   ],
   "outputs": {
-        "functionAppName": {
-            "type": "string",
-            "value": "[variables('functionName')]"
-        }
+    "functionAppName": {
+      "type": "string",
+      "value": "[variables('functionName')]"
+    },
+    "functionKey": {
+      "type": "string",
+      "value": "[listSecrets(resourceId('Microsoft.Web/sites', variables('functionName')), '2018-11-01').key]"
+    },
+    "functionUri": {
+      "type": "string",
+      "value": "[concat('https://', variables('functionName'), 'azurewebsites.net/api/cli?code=', listSecrets(resourceId('Microsoft.Web/sites', variables('functionName')), '2018-11-01').key)]"
     }
+  }
 }
