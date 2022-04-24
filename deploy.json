@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "functionName": {
-      "defaultValue": "cli-log",
+      "defaultValue": "cli",
       "type": "string",
       "minLength": 7,
       "metadata": {
@@ -236,10 +236,6 @@
     "functionKey": {
       "type": "string",
       "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName'), parameters('functionName')),'2022-03-01').key]"
-    },
-    "functionUri": {
-      "type": "string",
-      "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName'), parameters('functionName')),'2022-03-01').trigger_url]"
     }
   }
 }
