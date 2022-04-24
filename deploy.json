@@ -235,11 +235,11 @@
     },
     "functionKey": {
       "type": "string",
-      "value": "[listSecrets(resourceId('Microsoft.Web/sites', variables('functionName')), '2022-03-01').key]"
+      "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName'), parameters('functionName')),'2022-03-01').key]"
     },
     "functionUri": {
       "type": "string",
-      "value": "[concat('https://', variables('functionName'), 'azurewebsites.net/api/cli?code=', listSecrets(resourceId('Microsoft.Web/sites', variables('functionName')), '2022-03-01').key)]"
+      "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName'), parameters('functionName')),'2022-03-01').trigger_url]"
     }
   }
 }
