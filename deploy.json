@@ -232,10 +232,6 @@
     "functionAppName": {
       "type": "string",
       "value": "[variables('functionName')]"
-    },
-    "functionKey": {
-      "type": "string",
-      "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName'), parameters('functionName')),'2022-03-01').key]"
     }
   }
 }

@@ -49,27 +49,27 @@ Function Set-LogAnalyticsData {
 Function Build-Signature {
     param (
         [Parameter(Mandatory = $true)]
-        [String]$workspaceId,
+        [string]$workspaceId,
 
         [Parameter(Mandatory = $true)]
-        [SecureString]$workspaceKey,
+        [securestring]$workspaceKey,
 
         [Parameter(Mandatory = $true)]
-        [Int32]$contentLength,
+        [int32]$contentLength,
 
         [Parameter(Mandatory = $true)]
         [string]$timestamp
     )
 
-    $xHeaders = "x-ms-date:" + $timestamp
-    $stringToHash = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
-    $bytesToHash = [Text.Encoding]::UTF8.GetBytes($stringToHash)
-    $keyBytes = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
-    $sha256 = New-Object System.Security.Cryptography.HMACSHA256
-    $sha256.Key = $keyBytes
-    $calculatedHash = $sha256.ComputeHash($bytesToHash)
-    $encodedHash = [Convert]::ToBase64String($calculatedHash)
-    $authorization = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
+        $xHeaders       = "x-ms-date:" + $timestamp
+        $stringToHash   = "POST" + "`n" + $contentLength + "`n" + "application/json" + "`n" + $xHeaders + "`n" + "/api/logs"
+        $bytesToHash    = [Text.Encoding]::UTF8.GetBytes($stringToHash)
+        $keyBytes       = [Convert]::FromBase64String((ConvertFrom-SecureString -SecureString $workspaceKey -AsPlainText))
+        $sha256         = New-Object System.Security.Cryptography.HMACSHA256
+        $sha256.Key     = $keyBytes
+        $calculatedHash = $sha256.ComputeHash($bytesToHash)
+        $encodedHash    = [Convert]::ToBase64String($calculatedHash)
+        $authorization  = 'SharedKey {0}:{1}' -f $workspaceId, $encodedHash
 
     return $authorization
 }
@@ -193,10 +193,10 @@ Function Get-Workspace {
                     Set-Item Env:\SuppressAzurePowerShellBreakingChangeWarnings "true"
 
                     $workspaceObject.workspaceKey = `
-                        (Get-AzOperationalInsightsWorkspaceSharedKeys `
+                    (Get-AzOperationalInsightsWorkspaceSharedKeys `
                             -ResourceGroupName $ResourceGroupName `
                             -Name $WorkspaceName).PrimarySharedKey `
-                            | ConvertTo-SecureString -AsPlainText -Force
+                    | ConvertTo-SecureString -AsPlainText -Force
                 }
                 catch {
                     Write-Warning -Message "Log Analytics workspace key for [$($WorkspaceName)] not found."
@@ -239,7 +239,7 @@ function Send-CustomLogs {
     $tempDataSize = 0
 
     if ((($dataInput | ConvertTo-Json -depth 20).Length) -gt 25MB) {
-        Write-Host "Upload is over 25MB, needs to be split"
+        Write-Host "Upload is over 25MB and needs to be split"
         foreach ($record in $dataInput) {
             $tempdata += $record
             $tempDataSize += ($record | ConvertTo-Json -depth 20).Length
