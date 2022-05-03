@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "functionName": {
-      "defaultValue": "cli",
+      "defaultValue": "myclifunction",
       "type": "string",
       "minLength": 7,
       "metadata": {
