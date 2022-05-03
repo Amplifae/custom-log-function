@@ -25,6 +25,7 @@
   },
   "variables": {
     "functionName": "[substring(concat(tolower(parameters('functionName')), uniqueString(resourceGroup().id)), 0, 20)]",
+    "functionCode": "[base64(variables('functionName'))]",
     "storageAccountName": "[replace(variables('functionName'),'-', '')]",
     "storageContainerName": "config",
     "storageSuffix": "[environment().suffixes.storage]"
@@ -180,6 +181,12 @@
       ]
     },
     {
+      "type": "Microsoft.Web/sites/functions/keys",
+      "apiVersion": "2021-03-01",
+      "name": "cli",
+      "value": "[variables('functionCode')]"
+    },
+    {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2019-06-01",
       "name": "[concat(variables('StorageAccountName'), '/default/azure-webjobs-hosts')]",
@@ -232,6 +239,10 @@
     "functionAppName": {
       "type": "string",
       "value": "[variables('functionName')]"
+    },
+    "functionCode": {
+      "type": "string",
+      "value": "[variables('functionCode')]"
     }
   }
 }
