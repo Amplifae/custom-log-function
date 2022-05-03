@@ -19,9 +19,6 @@ using namespace System.Net
 # Input bindings are passed in via param block.
 param($Request, $TriggerMetadata)
 
-# Write to the Azure Functions log stream.
-Write-Host "PowerShell HTTP trigger function processed a request."
-
 # Write an information log with the current time.
 Write-Host "PowerShell timer trigger function ran! TIME: $((Get-Date).ToUniversalTime())"
 
@@ -36,9 +33,25 @@ $variables = @{
 $parameters = @{
     workspaceId   = ''
     workspaceKey  = ''
+    dataInput     = ''
     tableName     = $variables.tableName
-    format        = $variables.format
-    dataInput     = $variables.dataInput
+}
+
+Write-Host "Processing File input"
+if ($format -eq 'csv') {
+    try {
+        Write-Output "Converting file from CSV to Object"
+        $parameters.dataInput = $dataInput | ConvertFrom-CSV
+    } catch {
+        Write-Output "Unable to process CSV file"
+    }
+} else {
+    try {
+        Write-Output "Converting file from JSON to Object"
+        $parameters.dataInput = $dataInput | ConvertFrom-JSON
+    } catch {
+        Write-Output "Unable to process JSON file"
+    }
 }
 
 if ([string]::IsNullOrEmpty($variables.tableName)) {
