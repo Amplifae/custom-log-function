@@ -74,94 +74,6 @@ Function Build-Signature {
     return $authorization
 }
 
-Function Set-TimeStamp {
-    param (
-        [Parameter(Mandatory = $false)]
-        [string]$lastRun,
-
-        [Parameter(Mandatory = $true)]
-        [string]$AzureWebJobsStorage,
-
-        [Parameter(Mandatory = $true)]
-        [string]$storageAccountContainer
-    )
-
-    if ([string]::IsNullOrEmpty($lastRun)) {
-        $lastRun = (Get-Date).ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
-    }
-
-    $lastRunAudit = @{
-        'lastRun' = $lastRun
-    }
-
-    $lastRunAudit | ConvertTo-Json | Out-File "$env:temp\timestamp.json"
-
-    try {
-        Write-Verbose "Selecting Storage Context"
-        $storageAccountContext = New-AzStorageContext -ConnectionString $AzureWebJobsStorage
-    }
-    catch {
-        return 'Unable to connect to Storage Context'
-    }
-
-    Write-Verbose 'Saving new timestamp'
-    try {
-        $null = Set-AzStorageBlobContent `
-            -Blob "timestamp.json" `
-            -Container $storageAccountContainer `
-            -Context $storageAccountContext `
-            -File "$env:temp\timestamp.json" `
-            -Force
-    }
-    catch {
-        return 'Unable to create new timestamp'
-    }
-    return $lastRun
-}
-
-Function Get-TimeStamp {
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]$AzureWebJobsStorage,
-
-        [Parameter(Mandatory = $true)]
-        [string]$storageAccountContainer
-    )
-
-    $storageAccountContext = New-AzStorageContext -ConnectionString $AzureWebJobsStorage
-
-    try {
-        Write-Verbose "Get Blob Context"
-        $blobContext = Get-AzStorageBlob `
-            -Blob "timestamp.json" `
-            -Container $storageAccountContainer `
-            -Context $storageAccountContext
-    }
-    catch {
-        Write-Output "Unable to access [timestamp.json]"
-    }
-
-    if (![string]::IsNullOrEmpty($blobContext)) {
-        Write-Verbose "Get Blob File"
-        $null = Get-AzStorageBlobContent `
-            -Blob "timestamp.json" `
-            -Container $storageAccountContainer `
-            -Context $storageAccountContext `
-            -Destination "$env:temp\timestamp.json" `
-            -Force
-
-        Write-Verbose "Get File Content"
-        $lastRunAuditContext = Get-Content "$env:temp\timestamp.json" | ConvertFrom-Json
-        if ($null -ne $lastRunAuditContext) {
-            $timestamp = ($lastRunAuditContext.lastRun).ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
-        }
-        else {
-            $timestamp = Set-TimeStamp
-        }
-        return $timestamp
-    }
-}
-
 Function Get-Workspace {
     param (
         [Parameter(Mandatory = $false)]
@@ -174,10 +86,10 @@ Function Get-Workspace {
                 workspaceId  = ''
                 workspaceKey = ''
             }
-            Write-Verbose "Connecting to workspace"
 
+            Write-Verbose "Connecting to workspace"
             $workspace = Get-AzResource `
-                -Name "$WorkspaceName" `
+                -Name "$workspaceName" `
                 -ResourceType 'Microsoft.OperationalInsights/workspaces'
 
             $ResourceGroupName = $workspace.ResourceGroupName
@@ -239,7 +151,6 @@ function Send-CustomLogs {
     $tempDataSize = 0
 
     if ((($dataInput | ConvertTo-Json -depth 20).Length) -gt 25MB) {
-        Write-Host "Upload is over 25MB and needs to be split"
         foreach ($record in $dataInput) {
             $tempdata += $record
             $tempDataSize += ($record | ConvertTo-Json -depth 20).Length
@@ -264,11 +175,11 @@ function Send-CustomLogs {
         $tempdata = $null
         $tempdata = @()
         $tempDataSize = 0
-    }
-    else {
+    } else {
         $postObject.body = ([System.Text.Encoding]::UTF8.GetBytes(($dataInput | ConvertTo-Json -depth 20)))
         $postObject.timestamp = [DateTime]::UtcNow.ToString("r")
     }
+
     Write-Host "Sending data"
     Set-LogAnalyticsData @postObject
 }
