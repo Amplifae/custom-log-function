@@ -236,7 +236,7 @@
     },
     "functionKey": {
       "type": "string",
-      "value": "listKeys(resourceId('Microsoft.Web/sites/functions', variables('functionName'), 'cli'),'2021-02-01').default"
+      "value": "[listKeys(resourceId('Microsoft.Web/sites/functions', variables('functionName'), 'cli'),'2021-02-01').default]"
     }
   }
 }
