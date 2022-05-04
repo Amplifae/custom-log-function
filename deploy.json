@@ -181,7 +181,7 @@
         {
           "type": "Microsoft.Web/sites/functions/keys",
           "apiVersion": "2021-03-01",
-          "name": "cli",
+          "name": "[concat(variables('functionName'), 'default')]",
           "value": "[variables('functionCode')]"
         }
       ]
