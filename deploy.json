@@ -182,7 +182,10 @@
           "type": "keys",
           "apiVersion": "2021-03-01",
           "name": "default",
-          "value": "[variables('functionCode')]"
+          "value": "[variables('functionCode')]",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', variables('functionName'))]"
+          ]
         }
       ]
     },
