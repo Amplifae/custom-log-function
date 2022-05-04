@@ -41,14 +41,14 @@ Write-Host "Processing File input"
 if ($format -eq 'csv') {
     try {
         Write-Output "Converting file from CSV to object"
-        $parameters.dataInput = $dataInput | ConvertFrom-CSV
+        $parameters.dataInput = $variables.dataInput | ConvertFrom-CSV
     } catch {
         Write-Output "Unable to process CSV file"
     }
 } else {
     try {
         Write-Output "Converting file from JSON to object"
-        $parameters.dataInput = $dataInput | ConvertFrom-JSON
+        $parameters.dataInput = $variables.dataInput | ConvertFrom-JSON
     } catch {
         Write-Output "Unable to process JSON file"
     }
