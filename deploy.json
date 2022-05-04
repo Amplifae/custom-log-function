@@ -177,15 +177,6 @@
             "workspaceKey": "[parameters('workspacekey')]",
             "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/SecureHats/custom-log-function/raw/main/function.zip"
           }
-        },
-        {
-          "type": "functions/keys",
-          "apiVersion": "2021-03-01",
-          "name": "default",
-          "value": "[variables('functionCode')]",
-          "dependsOn": [
-            "[concat('Microsoft.Web/sites/', variables('functionName'))]"
-          ]
         }
       ]
     },
@@ -245,7 +236,7 @@
     },
     "functionCode": {
       "type": "string",
-      "value": "[variables('functionCode')]"
+      "value": "[listkeys(concat(resourceId(resourceGroup().name, 'Microsoft.Web/sites', variables('functionName')), '/host/default'), '2018-11-01').masterKey]"
     }
   }
 }
