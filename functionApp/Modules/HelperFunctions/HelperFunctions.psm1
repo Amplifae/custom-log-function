@@ -98,7 +98,7 @@ Function Get-Workspace {
             $workspaceObject.workspaceId = (Get-AzOperationalInsightsWorkspace -ResourceGroupName $resourceGroupName -Name $workspaceName).CustomerId.Guid
 
             Write-Host "Workspace Name: $($workspaceName)"
-            Write-Host "Workspace Id: $($workspaceId)"
+            Write-Host "Workspace Id: $(workspaceObject.$workspaceId)"
 
             if ($null -ne $workspace) {
                 try {
@@ -106,8 +106,8 @@ Function Get-Workspace {
 
                     $workspaceObject.workspaceKey = `
                     (Get-AzOperationalInsightsWorkspaceSharedKeys `
-                            -ResourceGroupName $ResourceGroupName `
-                            -Name $WorkspaceName).PrimarySharedKey `
+                            -ResourceGroupName $resourceGroupName `
+                            -Name $workspaceName).PrimarySharedKey `
                     | ConvertTo-SecureString -AsPlainText -Force
                 }
                 catch {
