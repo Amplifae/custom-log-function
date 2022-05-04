@@ -179,7 +179,7 @@
           }
         },
         {
-          "type": "keys",
+          "type": "functions/keys",
           "apiVersion": "2021-03-01",
           "name": "default",
           "value": "[variables('functionCode')]",
