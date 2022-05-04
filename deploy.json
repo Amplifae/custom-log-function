@@ -234,9 +234,9 @@
       "type": "string",
       "value": "[variables('functionName')]"
     },
-    "functionCode": {
+    "functionKey": {
       "type": "string",
-      "value": "[listkeys(concat(resourceId(resourceGroup().name, 'Microsoft.Web/sites', variables('functionName')), '/host/default'), '2018-11-01').masterKey]"
+      "value": "[listSecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName'), variables('functionName')), providers('Microsoft.Web', 'sites').apiVersions[0])]"
     }
   }
 }
