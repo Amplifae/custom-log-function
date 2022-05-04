@@ -25,7 +25,7 @@
   },
   "variables": {
     "functionName": "[substring(concat(tolower(parameters('functionName')), uniqueString(resourceGroup().id)), 0, 20)]",
-    "functionCode": "[base64(variables('functionName'))]",
+   // "functionCode": "[base64(variables('functionName'))]",
     "storageAccountName": "[replace(variables('functionName'),'-', '')]",
     "storageContainerName": "config",
     "storageSuffix": "[environment().suffixes.storage]"
@@ -236,7 +236,7 @@
     },
     "functionKey": {
       "type": "string",
-      "value": "[listSecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName'), variables('functionName')), providers('Microsoft.Web', 'sites').apiVersions[0])]"
+      "value": "[listSecrets(resourceId('Microsoft.Web/sites/functions', variables('functionName')), providers('Microsoft.Web', 'sites').apiVersions[0])]"
     }
   }
 }
